@@ -1,0 +1,86 @@
+<div class="invoices-page">
+  <div class="toolbar">
+    <h2>Invoices</h2>
+    @if (accountId) {
+      <button type="button" class="btn-primary" (click)="openCreate()">New invoice</button>
+    }
+  </div>
+
+  @if (accounts.length > 1) {
+    <div class="account-select">
+      <label>Account:</label>
+      <select [ngModel]="accountId" (ngModelChange)="accountId = $event; loadInvoices()">
+        @for (a of accounts; track a.id) {
+          <option [value]="a.id">{{ a.name }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <p>Loading...</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Document ID</th>
+          <th>Status</th>
+          <th>Sent at</th>
+          <th>Error</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (inv of invoices; track inv.id) {
+          <tr>
+            <td>{{ inv.id }}</td>
+            <td>{{ inv.documentIdentifier }}</td>
+            <td><span class="badge" [ngClass]="statusClass(inv.status)">{{ inv.status }}</span></td>
+            <td>{{ inv.sentAt ? (inv.sentAt | date:'short') : '-' }}</td>
+            <td class="err">{{ inv.errorMessage || '-' }}</td>
+            <td>
+              @if (inv.status !== 'SENT' && inv.status !== 'ACCEPTED' && inv.status !== 'SENDING') {
+                <button
+                  type="button"
+                  class="btn-sm"
+                  (click)="onSend(inv.id)"
+                  [disabled]="sendLoadingId === inv.id"
+                >
+                  {{ sendLoadingId === inv.id ? 'Sending...' : 'Send' }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (invoices.length === 0 && accountId) {
+      <p class="empty">No invoices. Create one with "New invoice".</p>
+    }
+  }
+
+  @if (showCreateModal) {
+    <div class="modal-backdrop" (click)="closeCreate()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h3>New invoice</h3>
+        <div class="field">
+          <label>Document identifier (invoice number)</label>
+          <input type="text" [(ngModel)]="newDocId" placeholder="e.g. INV-001" />
+        </div>
+        <div class="field">
+          <label>XML content (TEIF)</label>
+          <textarea [(ngModel)]="newXml" rows="8" style="width: 100%; font-family: monospace;"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeCreate()">Cancel</button>
+          <button type="button" class="btn-primary" (click)="createInvoice()" [disabled]="!newDocId.trim()">Create</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

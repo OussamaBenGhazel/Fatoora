@@ -1,0 +1,48 @@
+<div class="layout">
+  <header class="header">
+    <div class="brand">El Fatoora Supplier</div>
+    <div class="user">
+      <span>{{ user()?.displayName || user()?.username }}</span>
+      <button type="button" class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+    <a routerLink="/dashboard/invoices" routerLinkActive="active">Invoices</a>
+    <a routerLink="/dashboard/audit" routerLinkActive="active">Audit logs</a>
+  </nav>
+
+  <main class="main">
+    <div class="card">
+      <h2>Welcome</h2>
+      <p>Use the menu to send and monitor invoices, or view audit logs.</p>
+      @if (clients.length > 0) {
+        <div class="clients">
+          <h3>Clients</h3>
+          <div class="client-tabs">
+            @for (c of clients; track c.id) {
+              <button
+                type="button"
+                class="tab"
+                [class.active]="selectedClientId === c.id"
+                (click)="selectClient(c.id)"
+              >
+                {{ c.name }} ({{ c.matriculeFiscale }})
+              </button>
+            }
+          </div>
+          @if (selectedClientId && accounts.length > 0) {
+            <p class="accounts-label">Accounts:</p>
+            <ul>
+              @for (a of accounts; track a.id) {
+                <li><a routerLink="/dashboard/invoices" [queryParams]="{ accountId: a.id }">{{ a.name }}</a></li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>
