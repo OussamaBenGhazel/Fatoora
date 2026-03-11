@@ -37,6 +37,8 @@ public class AuthController {
                 "user", UserResponse.builder()
                     .username(user.getUsername())
                     .displayName(user.getDisplayName())
+                    .clientId(user.getClient() != null ? user.getClient().getId() : null)
+                    .managingCompany(user.isManagingCompanyUser())
                     .build()
             ));
         } catch (Exception e) {
@@ -53,6 +55,8 @@ public class AuthController {
             .map(u -> ResponseEntity.ok(UserResponse.builder()
                 .username(u.getUsername())
                 .displayName(u.getDisplayName())
+                .clientId(u.getClient() != null ? u.getClient().getId() : null)
+                .managingCompany(u.isManagingCompanyUser())
                 .build()))
             .orElse(ResponseEntity.status(401).build());
     }

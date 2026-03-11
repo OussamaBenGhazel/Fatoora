@@ -1,0 +1,156 @@
+<div class="param-layout">
+  <h2>Paramétrage</h2>
+
+  <div class="tabs">
+    <button type="button" class="tab" [class.active]="tab === 'articles'" (click)="setTab('articles')">
+      Articles (Familles / Sous-familles)
+    </button>
+    <button type="button" class="tab" [class.active]="tab === 'clients'" (click)="setTab('clients')">
+      Clients
+    </button>
+    <button type="button" class="tab" [class.active]="tab === 'suppliers'" (click)="setTab('suppliers')">
+      Fournisseurs
+    </button>
+  </div>
+
+  @if (tab === 'articles') {
+    <section class="grid">
+      <div class="card">
+        <h3>Familles d'articles</h3>
+        <form (ngSubmit)="addFamily()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newFamily.code" name="famCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newFamily.name" name="famName" />
+          <input type="text" placeholder="Description" [(ngModel)]="newFamily.description" name="famDesc" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (f of families; track f.id) {
+            <li><strong>{{ f.code }}</strong> - {{ f.name }}</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Sous-familles</h3>
+        <form (ngSubmit)="addSubFamily()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newSubFamily.code" name="sfCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newSubFamily.name" name="sfName" />
+          <select [(ngModel)]="newSubFamily.family" name="sfFamily">
+            <option [ngValue]="null">Famille...</option>
+            @for (f of families; track f.id) {
+              <option [ngValue]="f">{{ f.code }} - {{ f.name }}</option>
+            }
+          </select>
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (sf of subFamilies; track sf.id) {
+            <li>
+              <strong>{{ sf.code }}</strong> - {{ sf.name }}
+              <span class="muted">({{ sf.family?.code }} - {{ sf.family?.name }})</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="card wide">
+        <h3>Articles</h3>
+        <form (ngSubmit)="addArticle()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newArticle.code" name="artCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newArticle.name" name="artName" />
+          <select [(ngModel)]="newArticle.subFamily" name="artSubFamily">
+            <option [ngValue]="null">Sous-famille...</option>
+            @for (sf of subFamilies; track sf.id) {
+              <option [ngValue]="sf">{{ sf.code }} - {{ sf.name }}</option>
+            }
+          </select>
+          <button type="submit">Ajouter</button>
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Sous-famille</th>
+              <th>Actif</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of articles; track a.id) {
+              <tr>
+                <td>{{ a.code }}</td>
+                <td>{{ a.name }}</td>
+                <td>{{ a.subFamily?.code }}</td>
+                <td>{{ a.active ? 'Oui' : 'Non' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'clients') {
+    <section class="grid">
+      <div class="card">
+        <h3>Catégories clients</h3>
+        <form (ngSubmit)="addClientCategory()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newClientCategory.code" name="cliCatCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newClientCategory.name" name="cliCatName" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (c of clientCategories; track c.id) {
+            <li><strong>{{ c.code }}</strong> - {{ c.name }}</li>
+          }
+        </ul>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'suppliers') {
+    <section class="grid">
+      <div class="card">
+        <h3>Catégories fournisseurs</h3>
+        <form (ngSubmit)="addSupplierCategory()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newSupplierCategory.code" name="supCatCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newSupplierCategory.name" name="supCatName" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (c of supplierCategories; track c.id) {
+            <li><strong>{{ c.code }}</strong> - {{ c.name }}</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card wide">
+        <h3>Fournisseurs</h3>
+        <form (ngSubmit)="addSupplier()" class="form-inline">
+          <input type="text" placeholder="Raison sociale" [(ngModel)]="newSupplier.name" name="supName" />
+          <input type="text" placeholder="Matricule fiscale" [(ngModel)]="newSupplier.matriculeFiscale" name="supMf" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>MF</th>
+              <th>Catégorie</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of suppliers; track s.id) {
+              <tr>
+                <td>{{ s.name }}</td>
+                <td>{{ s.matriculeFiscale }}</td>
+                <td>{{ s.category?.name }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>
+

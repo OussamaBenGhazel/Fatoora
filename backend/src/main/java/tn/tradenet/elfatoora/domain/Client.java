@@ -27,6 +27,18 @@ public class Client {
     @Column(nullable = false, unique = true)
     private String matriculeFiscale;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private ClientCategory category;
+
+    /**
+     * Optional link to a managing company client. If set, this client is
+     * considered a sub-client of the managing company.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "managing_company_id")
+    private Client managingCompany;
+
     /** Max invoices per day (parametrable). */
     private Integer maxInvoicesPerDay = 100;
 

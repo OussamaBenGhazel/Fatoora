@@ -8,4 +8,6 @@ import lombok.Data;
 public class UserResponse {
     private String username;
     private String displayName;
+    private Long clientId;
+    private boolean managingCompany;
 }

@@ -7,6 +7,8 @@ import { environment } from '../../../environments/environment';
 export interface User {
   username: string;
   displayName: string;
+  clientId?: number | null;
+  managingCompany?: boolean;
 }
 
 export interface LoginResponse {

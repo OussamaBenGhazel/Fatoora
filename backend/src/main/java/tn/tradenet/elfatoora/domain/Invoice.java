@@ -32,13 +32,11 @@ public class Invoice {
     private InvoiceStatus status = InvoiceStatus.DRAFT;
 
     /** Raw TEIF XML (before or after signing). */
-    @Lob
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "text")
     private String xmlContent;
 
     /** Signed XML (after signing). */
-    @Lob
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "text")
     private String signedXmlContent;
 
     /** Error message if status = ERROR or REJECTED. */

@@ -11,12 +11,16 @@
     <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
     <a routerLink="/dashboard/invoices" routerLinkActive="active">Invoices</a>
     <a routerLink="/dashboard/audit" routerLinkActive="active">Audit logs</a>
+    <a routerLink="/dashboard/parametrage" routerLinkActive="active">Paramétrage</a>
   </nav>
 
   <main class="main">
     <div class="card">
       <h2>Welcome</h2>
-      <p>Use the menu to send and monitor invoices, or view audit logs.</p>
+      <p>
+        Manage your clients and their invoices from this dashboard.
+        Select a client below to open its accounts and navigate to invoices.
+      </p>
       @if (clients.length > 0) {
         <div class="clients">
           <h3>Clients</h3>
@@ -33,10 +37,19 @@
             }
           </div>
           @if (selectedClientId && accounts.length > 0) {
-            <p class="accounts-label">Accounts:</p>
+            <p class="accounts-label">Accounts for the selected client:</p>
             <ul>
               @for (a of accounts; track a.id) {
-                <li><a routerLink="/dashboard/invoices" [queryParams]="{ accountId: a.id }">{{ a.name }}</a></li>
+                <li>
+                  <span>{{ a.name }}</span>
+                  <a
+                    class="manage-link"
+                    routerLink="/dashboard/invoices"
+                    [queryParams]="{ accountId: a.id }"
+                  >
+                    Manage invoices
+                  </a>
+                </li>
               }
             </ul>
           }

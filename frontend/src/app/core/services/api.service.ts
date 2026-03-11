@@ -49,7 +49,8 @@ export class ApiService {
   ) {}
 
   getClients(): Observable<ClientDto[]> {
-    return this.http.get<ClientDto[]>(`${this.api}/clients`);
+    // Returns only the clients visible for the current user (managing company vs normal client vs admin).
+    return this.http.get<ClientDto[]>(`${this.api}/clients/current`);
   }
 
   getClient(id: number): Observable<ClientDto> {

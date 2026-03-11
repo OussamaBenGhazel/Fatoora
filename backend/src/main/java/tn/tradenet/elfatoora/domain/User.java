@@ -27,6 +27,16 @@ public class User {
     @Column(nullable = false)
     private String displayName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private Client client;
+
+    /**
+     * If true, this user represents a managing company user who can see/manage
+     * its own client plus the clients it manages.
+     */
+    private boolean managingCompanyUser = false;
+
     private boolean enabled = true;
 
     @Column(nullable = false, updatable = false)

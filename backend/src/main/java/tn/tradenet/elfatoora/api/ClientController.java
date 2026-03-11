@@ -2,11 +2,14 @@ package tn.tradenet.elfatoora.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import tn.tradenet.elfatoora.domain.Client;
 import tn.tradenet.elfatoora.domain.CompanyAccount;
 import tn.tradenet.elfatoora.repository.ClientRepository;
 import tn.tradenet.elfatoora.repository.CompanyAccountRepository;
+import tn.tradenet.elfatoora.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,10 +21,37 @@ public class ClientController {
 
     private final ClientRepository clientRepository;
     private final CompanyAccountRepository companyAccountRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public List<ClientDto> list() {
         return clientRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the list of clients visible for the currently authenticated user:
+     * - admin / users without client -> all clients
+     * - normal client user -> only its client
+     * - managing company user -> its own client + managed sub-clients
+     */
+    @GetMapping("/current")
+    public List<ClientDto> listForCurrent(@AuthenticationPrincipal UserDetails principal) {
+        if (principal == null) {
+            return list();
+        }
+        var userOpt = userRepository.findByUsername(principal.getUsername());
+        if (userOpt.isEmpty() || userOpt.get().getClient() == null) {
+            return list();
+        }
+        var user = userOpt.get();
+        Client client = user.getClient();
+        List<Client> visible;
+        if (user.isManagingCompanyUser()) {
+            visible = clientRepository.findByManagingCompanyIdOrId(client.getId(), client.getId());
+        } else {
+            visible = java.util.List.of(client);
+        }
+        return visible.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")

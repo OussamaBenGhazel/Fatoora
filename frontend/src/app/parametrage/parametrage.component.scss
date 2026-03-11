@@ -1,0 +1,93 @@
+.param-layout {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.tab.active {
+  background: #0f3460;
+  color: #fff;
+  border-color: #0f3460;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  background: #fafbff;
+}
+
+.card.wide {
+  grid-column: 1 / -1;
+}
+
+.form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-inline input,
+.form-inline select {
+  flex: 1 1 120px;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+.form-inline button {
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  border: none;
+  background: #0f3460;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead {
+  background: #f0f2ff;
+}
+
+th,
+td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.muted {
+  color: #777;
+  font-size: 0.8rem;
+}
+

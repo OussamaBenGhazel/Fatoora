@@ -135,3 +135,18 @@ ul a {
 ul a:hover {
   text-decoration: underline;
 }
+
+.manage-link {
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #0f3460;
+  color: #0f3460;
+}
+
+.manage-link:hover {
+  background: #0f3460;
+  color: #fff;
+  text-decoration: none;
+}
