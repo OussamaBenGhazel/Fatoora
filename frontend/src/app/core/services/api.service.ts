@@ -39,6 +39,52 @@ export interface AuditLogDto {
   createdAt: string;
 }
 
+export interface PurchaseRequestLineDto {
+  articleId: number;
+  quantity: number;
+  comment?: string;
+}
+
+export interface PurchaseRequestDto {
+  id: number;
+  departmentId: number | null;
+  departmentName?: string;
+  requestedBy: string;
+  neededDate: string | null;
+  status: string;
+  createdAt: string;
+}
+
+export interface PurchaseOrderLineDto {
+  articleId: number;
+  quantity: number;
+  unitPrice: number;
+  discountPercent?: number;
+}
+
+export interface PurchaseOrderDto {
+  id: number;
+  supplierId: number;
+  supplierName?: string;
+  departmentId: number | null;
+  departmentName?: string;
+  orderDate: string | null;
+  status: string;
+}
+
+export interface GoodsReceiptLineDto {
+  articleId: number;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface GoodsReceiptDto {
+  id: number;
+  orderId: number;
+  receiptDate: string | null;
+  status: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly api = environment.apiUrl;
@@ -93,5 +139,42 @@ export class ApiService {
     if (params.page != null) httpParams = httpParams.set('page', params.page);
     if (params.size != null) httpParams = httpParams.set('size', params.size);
     return this.http.get<{ content: AuditLogDto[]; totalElements: number }>(`${this.api}/audit`, { params: httpParams });
+  }
+
+  // --- Purchase (Achat) ---
+
+  getPurchaseRequests(): Observable<PurchaseRequestDto[]> {
+    return this.http.get<PurchaseRequestDto[]>(`${this.api}/purchase/requests`);
+  }
+
+  createPurchaseRequest(payload: { departmentId: number; neededDate?: string | null; lines: PurchaseRequestLineDto[] }): Observable<PurchaseRequestDto> {
+    return this.http.post<PurchaseRequestDto>(`${this.api}/purchase/requests`, payload);
+  }
+
+  updatePurchaseRequestStatus(id: number, status: string): Observable<PurchaseRequestDto> {
+    const params = new HttpParams().set('status', status);
+    return this.http.post<PurchaseRequestDto>(`${this.api}/purchase/requests/${id}/status`, {}, { params });
+  }
+
+  getPurchaseOrders(): Observable<PurchaseOrderDto[]> {
+    return this.http.get<PurchaseOrderDto[]>(`${this.api}/purchase/orders`);
+  }
+
+  createPurchaseOrder(payload: {
+    supplierId: number;
+    departmentId?: number | null;
+    requestId?: number | null;
+    orderDate?: string | null;
+    lines: PurchaseOrderLineDto[];
+  }): Observable<PurchaseOrderDto> {
+    return this.http.post<PurchaseOrderDto>(`${this.api}/purchase/orders`, payload);
+  }
+
+  getGoodsReceipts(): Observable<GoodsReceiptDto[]> {
+    return this.http.get<GoodsReceiptDto[]>(`${this.api}/purchase/receipts`);
+  }
+
+  createGoodsReceipt(payload: { orderId: number; receiptDate?: string | null; lines: GoodsReceiptLineDto[] }): Observable<GoodsReceiptDto> {
+    return this.http.post<GoodsReceiptDto>(`${this.api}/purchase/receipts`, payload);
   }
 }

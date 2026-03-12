@@ -11,6 +11,9 @@
     <button type="button" class="tab" [class.active]="tab === 'suppliers'" (click)="setTab('suppliers')">
       Fournisseurs
     </button>
+    <button type="button" class="tab" [class.active]="tab === 'stock'" (click)="setTab('stock')">
+      Stock (Départements / Affectations)
+    </button>
   </div>
 
   @if (tab === 'articles') {
@@ -145,6 +148,131 @@
                 <td>{{ s.name }}</td>
                 <td>{{ s.matriculeFiscale }}</td>
                 <td>{{ s.category?.name }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'stock') {
+    <section class="grid">
+      <div class="card">
+        <h3>Départements</h3>
+        <form (ngSubmit)="addDepartment()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newDepartment.code" name="depCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newDepartment.name" name="depName" />
+          <input type="text" placeholder="Nature (ECONOMAT, CUISINE...)" [(ngModel)]="newDepartment.nature" name="depNature" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (d of departments; track d.id) {
+            <li>
+              <strong>{{ d.code }}</strong> - {{ d.name }}
+              <span class="muted">{{ d.nature }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Unités de mesure</h3>
+        <form (ngSubmit)="addUnit()" class="form-inline">
+          <input type="text" placeholder="Code" [(ngModel)]="newUnit.code" name="unitCode" />
+          <input type="text" placeholder="Libellé" [(ngModel)]="newUnit.name" name="unitName" />
+          <input type="text" placeholder="Abréviation" [(ngModel)]="newUnit.abbreviation" name="unitAbbr" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul>
+          @for (u of units; track u.id) {
+            <li><strong>{{ u.code }}</strong> - {{ u.name }} ({{ u.abbreviation }})</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card wide">
+        <h3>Affectation Articles / Départements</h3>
+        <form (ngSubmit)="addArticleDepartment()" class="form-inline">
+          <select [(ngModel)]="newArticleDept.article" name="adArticle">
+            <option [ngValue]="null">Article...</option>
+            @for (a of articles; track a.id) {
+              <option [ngValue]="a">{{ a.code }} - {{ a.name }}</option>
+            }
+          </select>
+          <select [(ngModel)]="newArticleDept.department" name="adDepartment">
+            <option [ngValue]="null">Département...</option>
+            @for (d of departments; track d.id) {
+              <option [ngValue]="d">{{ d.code }} - {{ d.name }}</option>
+            }
+          </select>
+          <input type="number" placeholder="Stock min" [(ngModel)]="newArticleDept.stockMin" name="adStockMin" />
+          <input type="number" placeholder="Stock max" [(ngModel)]="newArticleDept.stockMax" name="adStockMax" />
+          <input type="number" placeholder="Prix vente" [(ngModel)]="newArticleDept.salePrice" name="adSalePrice" />
+          <button type="submit">Affecter</button>
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>Article</th>
+              <th>Département</th>
+              <th>Stock min</th>
+              <th>Stock max</th>
+              <th>Prix vente</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ad of articleDepartments; track ad.id) {
+              <tr>
+                <td>{{ ad.article?.code }} - {{ ad.article?.name }}</td>
+                <td>{{ ad.department?.code }} - {{ ad.department?.name }}</td>
+                <td>{{ ad.stockMin }}</td>
+                <td>{{ ad.stockMax }}</td>
+                <td>{{ ad.salePrice }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card wide">
+        <h3>Affectation Articles / Fournisseurs</h3>
+        <form (ngSubmit)="addArticleSupplier()" class="form-inline">
+          <select [(ngModel)]="newArticleSupplier.article" name="asArticle">
+            <option [ngValue]="null">Article...</option>
+            @for (a of articles; track a.id) {
+              <option [ngValue]="a">{{ a.code }} - {{ a.name }}</option>
+            }
+          </select>
+          <select [(ngModel)]="newArticleSupplier.supplier" name="asSupplier">
+            <option [ngValue]="null">Fournisseur...</option>
+            @for (s of suppliers; track s.id) {
+              <option [ngValue]="s">{{ s.name }}</option>
+            }
+          </select>
+          <input type="number" placeholder="Prix d'achat" [(ngModel)]="newArticleSupplier.purchasePrice" name="asPrice" />
+          <input type="number" placeholder="% Remise" [(ngModel)]="newArticleSupplier.discountPercent" name="asDiscount" />
+          <input type="date" [(ngModel)]="newArticleSupplier.conventionDate" name="asDate" />
+          <button type="submit">Affecter</button>
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>Article</th>
+              <th>Fournisseur</th>
+              <th>Prix d'achat</th>
+              <th>% Remise</th>
+              <th>Date convention</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (link of articleSuppliers; track link.id) {
+              <tr>
+                <td>{{ link.article?.code }} - {{ link.article?.name }}</td>
+                <td>{{ link.supplier?.name }}</td>
+                <td>{{ link.purchasePrice }}</td>
+                <td>{{ link.discountPercent }}</td>
+                <td>{{ link.conventionDate | date: 'yyyy-MM-dd' }}</td>
               </tr>
             }
           </tbody>

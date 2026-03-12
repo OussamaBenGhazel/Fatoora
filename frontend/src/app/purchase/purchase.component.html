@@ -1,0 +1,266 @@
+<div class="purchase-layout">
+  <h2>Module Achat</h2>
+  <p class="subtitle">
+    Gérez les demandes d'achat, les commandes fournisseurs et les réceptions de marchandises, en lien avec le stock.
+  </p>
+
+  <div class="tabs">
+    <button type="button" class="tab" [class.active]="view === 'requests'" (click)="setView('requests')">
+      Demandes d'achat
+    </button>
+    <button type="button" class="tab" [class.active]="view === 'orders'" (click)="setView('orders')">
+      Commandes fournisseurs
+    </button>
+    <button type="button" class="tab" [class.active]="view === 'receipts'" (click)="setView('receipts')">
+      Réceptions
+    </button>
+  </div>
+
+  @if (view === 'requests') {
+    <section class="grid">
+      <div class="card">
+        <h3>Nouvelle demande d'achat</h3>
+        <form (ngSubmit)="createRequest()" class="form-vertical">
+          <label>
+            Département
+            <select [(ngModel)]="newRequestDepartmentId" name="reqDept">
+              <option [ngValue]="null">Sélectionner...</option>
+              @for (d of departments; track d.id) {
+                <option [ngValue]="d.id">{{ d.code }} - {{ d.name }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Date souhaitée
+            <input type="date" [(ngModel)]="newRequestNeededDate" name="reqDate" />
+          </label>
+
+          <div class="sub-card">
+            <h4>Lignes de la demande</h4>
+            <div class="form-inline">
+              <select [(ngModel)]="newRequestArticleId" name="reqArticle">
+                <option [ngValue]="null">Article...</option>
+                @for (a of articles; track a.id) {
+                  <option [ngValue]="a.id">{{ a.code }} - {{ a.name }}</option>
+                }
+              </select>
+              <input type="number" min="0" placeholder="Quantité" [(ngModel)]="newRequestQuantity" name="reqQty" />
+              <button type="button" (click)="addRequestLine()">Ajouter ligne</button>
+            </div>
+            <ul>
+              @for (l of newRequestLines; track l.articleId) {
+                <li>
+                  Article #{{ l.articleId }} - Qté {{ l.quantity }}
+                </li>
+              }
+            </ul>
+          </div>
+
+          <button type="submit" class="btn-primary">Enregistrer la demande</button>
+        </form>
+      </div>
+
+      <div class="card wide">
+        <h3>Demandes existantes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Département</th>
+              <th>Demandeur</th>
+              <th>Date souhaitée</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of requests; track r.id) {
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td>{{ r.departmentName || r.departmentId }}</td>
+                <td>{{ r.requestedBy }}</td>
+                <td>{{ r.neededDate || '-' }}</td>
+                <td>{{ r.status }}</td>
+                <td class="actions">
+                  @if (r.status === 'DRAFT') {
+                    <button type="button" (click)="submitRequest(r)">Soumettre</button>
+                  }
+                  @if (r.status === 'SUBMITTED') {
+                    <button type="button" (click)="approveRequest(r)">Approuver</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (view === 'orders') {
+    <section class="grid">
+      <div class="card">
+        <h3>Nouvelle commande fournisseur</h3>
+        <form (ngSubmit)="createOrder()" class="form-vertical">
+          <label>
+            Fournisseur
+            <select [(ngModel)]="newOrderSupplierId" name="ordSupplier">
+              <option [ngValue]="null">Sélectionner...</option>
+              @for (s of suppliers; track s.id) {
+                <option [ngValue]="s.id">{{ s.name }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Département
+            <select [(ngModel)]="newOrderDepartmentId" name="ordDept">
+              <option [ngValue]="null">Optionnel...</option>
+              @for (d of departments; track d.id) {
+                <option [ngValue]="d.id">{{ d.code }} - {{ d.name }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Demande d'origine
+            <select [(ngModel)]="newOrderRequestId" name="ordReq">
+              <option [ngValue]="null">Aucune</option>
+              @for (r of requests; track r.id) {
+                <option [ngValue]="r.id">#{{ r.id }} - {{ r.status }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Date commande
+            <input type="date" [(ngModel)]="newOrderDate" name="ordDate" />
+          </label>
+
+          <div class="sub-card">
+            <h4>Lignes de commande</h4>
+            <div class="form-inline">
+              <select [(ngModel)]="newOrderArticleId" name="ordArticle">
+                <option [ngValue]="null">Article...</option>
+                @for (a of articles; track a.id) {
+                  <option [ngValue]="a.id">{{ a.code }} - {{ a.name }}</option>
+                }
+              </select>
+              <input type="number" min="0" placeholder="Quantité" [(ngModel)]="newOrderQuantity" name="ordQty" />
+              <input type="number" min="0" placeholder="Prix unitaire" [(ngModel)]="newOrderUnitPrice" name="ordPrice" />
+              <button type="button" (click)="addOrderLine()">Ajouter ligne</button>
+            </div>
+            <ul>
+              @for (l of newOrderLines; track l.articleId) {
+                <li>
+                  Article #{{ l.articleId }} - Qté {{ l.quantity }} &#64; {{ l.unitPrice }}
+                </li>
+              }
+            </ul>
+          </div>
+
+          <button type="submit" class="btn-primary">Enregistrer la commande</button>
+        </form>
+      </div>
+
+      <div class="card wide">
+        <h3>Commandes existantes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fournisseur</th>
+              <th>Département</th>
+              <th>Date</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (o of orders; track o.id) {
+              <tr>
+                <td>#{{ o.id }}</td>
+                <td>{{ o.supplierName || o.supplierId }}</td>
+                <td>{{ o.departmentName || o.departmentId || '-' }}</td>
+                <td>{{ o.orderDate || '-' }}</td>
+                <td>{{ o.status }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (view === 'receipts') {
+    <section class="grid">
+      <div class="card">
+        <h3>Nouvelle réception</h3>
+        <form (ngSubmit)="createReceipt()" class="form-vertical">
+          <label>
+            Commande fournisseur
+            <select [(ngModel)]="newReceiptOrderId" name="recOrder">
+              <option [ngValue]="null">Sélectionner...</option>
+              @for (o of orders; track o.id) {
+                <option [ngValue]="o.id">#{{ o.id }} - {{ o.supplierName || o.supplierId }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Date réception
+            <input type="date" [(ngModel)]="newReceiptDate" name="recDate" />
+          </label>
+
+          <div class="sub-card">
+            <h4>Lignes de réception</h4>
+            <div class="form-inline">
+              <select [(ngModel)]="newReceiptArticleId" name="recArticle">
+                <option [ngValue]="null">Article...</option>
+                @for (a of articles; track a.id) {
+                  <option [ngValue]="a.id">{{ a.code }} - {{ a.name }}</option>
+                }
+              </select>
+              <input type="number" min="0" placeholder="Quantité" [(ngModel)]="newReceiptQuantity" name="recQty" />
+              <input type="number" min="0" placeholder="Prix unitaire" [(ngModel)]="newReceiptUnitPrice" name="recPrice" />
+              <button type="button" (click)="addReceiptLine()">Ajouter ligne</button>
+            </div>
+            <ul>
+              @for (l of newReceiptLines; track l.articleId) {
+                <li>
+                  Article #{{ l.articleId }} - Qté {{ l.quantity }} &#64; {{ l.unitPrice }}
+                </li>
+              }
+            </ul>
+          </div>
+
+          <button type="submit" class="btn-primary">Valider la réception</button>
+        </form>
+      </div>
+
+      <div class="card wide">
+        <h3>Réceptions enregistrées</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Commande</th>
+              <th>Date</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of receipts; track r.id) {
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td>#{{ r.orderId }}</td>
+                <td>{{ r.receiptDate || '-' }}</td>
+                <td>{{ r.status }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+</div>
+

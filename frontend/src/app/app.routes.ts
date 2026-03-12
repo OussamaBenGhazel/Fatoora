@@ -6,6 +6,7 @@ import { DashboardHomeComponent } from './dashboard/dashboard-home.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { AuditComponent } from './audit/audit.component';
 import { ParametrageComponent } from './parametrage/parametrage.component';
+import { PurchaseComponent } from './purchase/purchase.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ export const routes: Routes = [
       { path: 'invoices', component: InvoicesComponent },
       { path: 'audit', component: AuditComponent },
       { path: 'parametrage', component: ParametrageComponent },
+      { path: 'achat', component: PurchaseComponent },
     ],
   },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
