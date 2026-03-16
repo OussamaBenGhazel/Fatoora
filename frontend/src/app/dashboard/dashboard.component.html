@@ -1,62 +1,109 @@
-<div class="layout">
-  <header class="header">
-    <div class="brand">El Fatoora Supplier</div>
-    <div class="user">
-      <span>{{ user()?.displayName || user()?.username }}</span>
-      <button type="button" class="btn-logout" (click)="logout()">Logout</button>
+<div class="shell">
+  <aside class="shell-sidebar">
+    <div class="shell-brand">
+      <div class="logo-circle">EF</div>
+      <div class="brand-text">
+        <span class="title">El Fatoora</span>
+        <span class="subtitle">Supplier Portal</span>
+      </div>
     </div>
-  </header>
+    <nav class="shell-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/dashboard/invoices" routerLinkActive="active">
+        <span class="icon">📄</span>
+        <span>Invoices</span>
+      </a>
+      <a routerLink="/dashboard/parametrage" routerLinkActive="active">
+        <span class="icon">⚙️</span>
+        <span>Paramétrage</span>
+      </a>
+      <a routerLink="/dashboard/achat" routerLinkActive="active">
+        <span class="icon">🛒</span>
+        <span>Achat</span>
+      </a>
+      <a routerLink="/dashboard/audit" routerLinkActive="active">
+        <span class="icon">📊</span>
+        <span>Audit logs</span>
+      </a>
+    </nav>
+    <div class="shell-sidebar-footer">
+      <div class="chip">v1.0 • Supplier</div>
+    </div>
+  </aside>
 
-  <nav class="nav">
-    <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
-    <a routerLink="/dashboard/invoices" routerLinkActive="active">Invoices</a>
-    <a routerLink="/dashboard/audit" routerLinkActive="active">Audit logs</a>
-    <a routerLink="/dashboard/parametrage" routerLinkActive="active">Paramétrage</a>
-    <a routerLink="/dashboard/achat" routerLinkActive="active">Achat</a>
-  </nav>
+  <main class="shell-main">
+    <header class="shell-header">
+      <div>
+        <h1>Bienvenue, {{ user()?.displayName || user()?.username }}</h1>
+        <p class="hint">Gérez vos clients, factures, stock et achats dans une interface unifiée.</p>
+      </div>
+      <button type="button" class="btn btn-outline" (click)="logout()">Déconnexion</button>
+    </header>
 
-  <main class="main">
-    <div class="card">
-      <h2>Welcome</h2>
-      <p>
-        Manage your clients and their invoices from this dashboard.
-        Select a client below to open its accounts and navigate to invoices.
-      </p>
+    <section class="shell-content">
+      <div class="hero-card">
+        <div>
+          <h2>Espace clients</h2>
+          <p>
+            Sélectionnez un client pour accéder rapidement à ses comptes, factures et paramètres.
+          </p>
+          <div class="hero-metrics" *ngIf="clients.length > 0">
+            <div class="metric">
+              <span class="label">Clients visibles</span>
+              <span class="value">{{ clients.length }}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Comptes actifs</span>
+              <span class="value">{{ accounts.length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       @if (clients.length > 0) {
-        <div class="clients">
-          <h3>Clients</h3>
+        <div class="clients-section">
           <div class="client-tabs">
             @for (c of clients; track c.id) {
               <button
                 type="button"
-                class="tab"
+                class="client-pill"
                 [class.active]="selectedClientId === c.id"
                 (click)="selectClient(c.id)"
               >
-                {{ c.name }} ({{ c.matriculeFiscale }})
+                <span class="pill-title">{{ c.name }}</span>
+                <span class="pill-subtitle">{{ c.matriculeFiscale }}</span>
               </button>
             }
           </div>
           @if (selectedClientId && accounts.length > 0) {
-            <p class="accounts-label">Accounts for the selected client:</p>
-            <ul>
-              @for (a of accounts; track a.id) {
-                <li>
-                  <span>{{ a.name }}</span>
-                  <a
-                    class="manage-link"
-                    routerLink="/dashboard/invoices"
-                    [queryParams]="{ accountId: a.id }"
-                  >
-                    Manage invoices
-                  </a>
-                </li>
-              }
-            </ul>
+            <div class="accounts-card">
+              <h3>Comptes du client sélectionné</h3>
+              <ul>
+                @for (a of accounts; track a.id) {
+                  <li>
+                    <div class="account-info">
+                      <span class="name">{{ a.name }}</span>
+                      <span class="code">Code: {{ a.accountCode }}</span>
+                    </div>
+                    <a
+                      class="account-link"
+                      routerLink="/dashboard/invoices"
+                      [queryParams]="{ accountId: a.id }"
+                    >
+                      Accéder aux factures
+                    </a>
+                  </li>
+                }
+              </ul>
+            </div>
           }
         </div>
       }
-    </div>
-    <router-outlet></router-outlet>
+
+      <router-outlet></router-outlet>
+    </section>
   </main>
 </div>

@@ -3,26 +3,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: radial-gradient(circle at top, #1f2937 0, #020617 60%);
+  color: var(--color-text);
 }
 
 .login-card {
-  background: #fff;
-  padding: 2rem 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.2), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.18), transparent 60%),
+    var(--color-surface);
+  padding: 2.25rem 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   width: 100%;
   max-width: 380px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
 }
 
 h1 {
   margin: 0 0 0.25rem 0;
-  font-size: 1.5rem;
-  color: #1a1a2e;
+  font-size: 1.6rem;
 }
 
 .subtitle {
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
 }
@@ -35,27 +38,29 @@ h1 {
   display: block;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text-muted);
   margin-bottom: 0.35rem;
 }
 
 .login-form input {
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  border-radius: 999px;
   font-size: 1rem;
   box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--color-text);
 }
 
 .login-form input:focus {
   outline: none;
-  border-color: #0f3460;
-  box-shadow: 0 0 0 2px rgba(15, 52, 96, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.7);
 }
 
 .error {
-  color: #c0392b;
+  color: #fecaca;
   font-size: 0.9rem;
   margin-bottom: 0.75rem;
 }
@@ -63,14 +68,15 @@ h1 {
 .btn-primary {
   width: 100%;
   padding: 0.75rem;
-  background: #0f3460;
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  color: #f9fafb;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   margin-top: 0.5rem;
+  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.6);
 }
 
 .btn-primary:hover:not(:disabled) {
