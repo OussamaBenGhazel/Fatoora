@@ -27,7 +27,7 @@ mvn spring-boot:run
 ```
 
 - API base: **http://localhost:8080/api**
-- H2 console: http://localhost:8080/h2-console (JDBC URL: `jdbc:h2:file:./data/elfatoora`, user: `sa`, password empty)
+- H2 console: http://localhost:8080/h2-console (JDBC URL: `jdbc:h2:file:./data/elfatoora`, user: `sa`, password empty)fn /Using Postgresql Later
 - Default user: **admin** / **admin**
 - Demo client and one company account are created on first run.
 
